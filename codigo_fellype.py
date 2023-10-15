@@ -4,6 +4,8 @@ from tkinter import messagebox
 import random
 import sqlite3
 
+#O CODIGO ABAIXO ESTÁ COMENTADO PARA NÃO CRIAR UM BANDO DE DADOS SEM QUERER QUANDO EXECUTAR
+#MAS MANTIVE O CODIGO AQUI PARA VOCÊS VISUALIZAREM COMO EU FIZ
 
 # #Criando o Banco de Dados:
 #
