@@ -1,6 +1,5 @@
 from customtkinter import *
-from tkinter import *
-from tkinter import messagebox
+from tkinter import messagebox, ttk
 import random
 import sqlite3
 
@@ -49,6 +48,8 @@ class App(CTk):
 
         self.show_home_frame()  # Exibe o quadro "home" por padrão
 
+        self.update_data_table()  # Inicializar a tabela com dados existentes
+
     # Configurações da janela principal
     def layout_config(self):
         self.title('Escola XYZ')
@@ -57,6 +58,12 @@ class App(CTk):
 
         set_appearance_mode('dark')
         set_default_color_theme('blue')
+
+        # Definir estilos personalizados para o Treeview
+        style = ttk.Style()
+        style.configure('Treeview.Heading', font=('Arial', 10, 'bold'))
+        style.configure('Treeview', font=('Arial', 10))
+        style.layout('Treeview', [('Treeview.treearea', {'sticky': 'nswe'})])
 
     # Cria o menu lateral
     def menu_lateral(self):
@@ -146,6 +153,25 @@ class App(CTk):
         confirm_button = CTkButton(frameSistema, text='Criar Cadastro', command=self.criar_cadastro)
         confirm_button.place(x=10, y=150)
 
+        # Cria uma tabela para exibir dados
+        self.data_table = ttk.Treeview(frameSistema, columns=('Nome', 'Código'), show='headings')
+        self.data_table.heading('#1', text='Nome')
+        self.data_table.heading('#2', text='Código')
+        self.data_table.column('#1', width=300)
+        self.data_table.column('#2', width=150)
+
+        # Remover a coluna de índice padrão
+        self.data_table['show'] = 'headings'
+
+        self.data_table.place(x=10, y=300)
+
+        # Adicione a entrada de texto e o botão de filtro
+        self.filtro_entry = CTkEntry(frameSistema, width=300)
+        self.filtro_entry.place(x=10, y=250)
+
+        filtro_button = CTkButton(frameSistema, text='Filtrar', command=self.filtrar_tabela)
+        filtro_button.place(x=320, y=250)
+
     # Cria o quadro da seção "usuário"
     def usuario(self):
         frameUsuario = CTkFrame(self, fg_color='transparent', width=750, height=500, corner_radius=0)
@@ -175,35 +201,98 @@ class App(CTk):
         # Feche a conexão com o banco de dados
         conexao.close()
 
-    # Cria um novo cadastro no banco de dados
+    # Criar novo cadastro no banco de dados
     def criar_cadastro(self):
-        sistemaNome = self.nome_entry.get()
+        sistemaNome = self.nome_entry.get().lower().replace(" ", "") # Converte para letras minúsculas e elimina espaços
         sistemaCodigo = self.codigo_entry.get()
 
         if sistemaNome and sistemaCodigo:
-            resposta = messagebox.askquestion("Confirmação", "Confirmar o cadastro?")
-            if resposta == "yes":
-                conexao = sqlite3.connect('banco_sistemas.db')
-                c = conexao.cursor()
+            # Verifique se o nome já existe no banco de dados
+            conexao = sqlite3.connect('banco_sistemas.db')
+            c = conexao.cursor()
 
-                # Inserir dados na tabela:
-                c.execute("INSERT INTO tabela_sistemas VALUES (:nome,:codigo)",
-                          {
-                              'nome': self.nome_entry.get(),
-                              'codigo': self.codigo_entry.get()
-                          })
-                # Commit as mudanças:
-                conexao.commit()
+            c.execute("SELECT * FROM tabela_sistemas WHERE nome = ?", (sistemaNome,))
+            nome_existente = c.fetchone()
 
-                # Fechar o banco de dados:
-                conexao.close()
+            # Verifique se o código já existe no banco de dados
+            c.execute("SELECT * FROM tabela_sistemas WHERE codigo = ?", (sistemaCodigo,))
+            codigo_existente = c.fetchone()
 
-                print(f'Cadastro criado - Nome: {sistemaNome}, Código: {sistemaCodigo}')
-                self.nome_entry.delete(0, 'end')
-                self.codigo_entry.delete(0, 'end')
+            # Mensagem de erro padrão
+            mensagem = 'Ocorreu algum erro. Tente novamente.'
+
+            if nome_existente:
+                mensagem = f'Nome "{sistemaNome}" já está em uso. Tente outro nome.'
+
+            if codigo_existente:
+                mensagem = f'Código "{sistemaCodigo}" já está em uso. Tente outro código.\n\n Se desejar, utilize o gerador automatico de código, clicando no botão "Gerar".'
+
+            if nome_existente and codigo_existente:
+                mensagem = f'Nome e código já estão em uso. Tente novamente.\n\n Se desejar, utilize o gerador automatico de código, clicando no botão "Gerar".'
+
+            if not (nome_existente or codigo_existente):
+                resposta = messagebox.askquestion('Confirmação', 'Confirmar o cadastro?')
+                if resposta == 'yes':
+                    # Inserir dados na tabela:
+                    c.execute('INSERT INTO tabela_sistemas VALUES (:nome, :codigo)',
+                              {
+                                  'nome': sistemaNome,
+                                  'codigo': sistemaCodigo
+                              })
+                    # Confirmar as alterações:
+                    conexao.commit()
+                    # Fechar o banco de dados:
+                    conexao.close()
+
+                    print(f'Cadastro criado - Nome: {sistemaNome}, Código: {sistemaCodigo}')
+                    self.nome_entry.delete(0, 'end')
+                    self.codigo_entry.delete(0, 'end')
+                    self.update_data_table()  # Atualizar a tabela quando uma nova entrada é criada
+                    return
+
+            # Exiba uma mensagem de erro com informações sobre as duplicatas
+            messagebox.showerror("Erro", mensagem)
         else:
             print('Erro', 'Por favor, preencha todos os campos.')
             messagebox.showerror('Erro', 'Por favor, preencha todos os campos.')  # Exibe um alerta de erro
+
+    # Adicione um método para atualizar a tabela com dados do banco de dados
+    def update_data_table(self):
+        # Limpar dados existentes na tabela
+        for item in self.data_table.get_children():
+            self.data_table.delete(item)
+
+        # Buscar dados do banco de dados e preencher a tabela
+        conexao = sqlite3.connect('banco_sistemas.db')
+        c = conexao.cursor()
+        c.execute("SELECT nome, codigo FROM tabela_sistemas")
+        data = c.fetchall()
+        conexao.close()
+
+        for row in data:
+            self.data_table.insert('', 'end', values=row)
+
+    # Função para filtrar a tabela com base no critério de pesquisa
+    def filtrar_tabela(self):
+        # Obtém o critério de pesquisa da entrada de texto
+        criterio = self.filtro_entry.get().strip().lower()
+
+        # Limpa os dados existentes na tabela
+        for item in self.data_table.get_children():
+            self.data_table.delete(item)
+
+        # Busca os dados do banco de dados
+        conexao = sqlite3.connect('banco_sistemas.db')
+        c = conexao.cursor()
+        c.execute("SELECT nome, codigo FROM tabela_sistemas")
+        data = c.fetchall()
+        conexao.close()
+
+        # Preenche a tabela com os dados que correspondem ao critério de pesquisa
+        for row in data:
+            if criterio in row[0].lower() or criterio in row[1].lower():
+                self.data_table.insert('', 'end', values=row)
+
 
 # Executa a aplicação
 if __name__ == '__main__':
