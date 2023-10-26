@@ -1,5 +1,5 @@
 from customtkinter import *
-from tkinter import messagebox, ttk
+from tkinter import messagebox, ttk, Toplevel
 import random
 import sqlite3
 
@@ -32,7 +32,7 @@ class App(CTk):
     def layout_config(self):
         self.title('Escola XYZ')
         self.geometry('910x550')
-        self.resizable(width=True, height=True)
+        self.resizable(width=False, height=False)
 
         set_appearance_mode('dark')
         set_default_color_theme('blue')
@@ -134,11 +134,11 @@ class App(CTk):
         gerar_codigo_button = CTkButton(frameSistema, text='Gerar', width=50, command=self.gerar_codigo)
         gerar_codigo_button.place(x=230, y=100)
 
-        confirm_button = CTkButton(frameSistema, text='Criar Cadastro', command=self.criar_cadastro)
-        confirm_button.place(x=10, y=150)
+        criar_button = CTkButton(frameSistema, text='Criar Cadastro', command=self.criar_cadastro)
+        criar_button.place(x=10, y=150)
 
         # Cria uma tabela para exibir dados
-        self.data_table = ttk.Treeview(frameSistema, columns=('Nome', 'Código'), show='headings')
+        self.data_table = ttk.Treeview(frameSistema, columns=('Nome', 'Código', 'Ações'), show='headings')
         self.data_table.heading('#1', text='Nome')
         self.data_table.heading('#2', text='Código')
         self.data_table.column('#1', width=300)
@@ -149,11 +149,21 @@ class App(CTk):
 
         self.data_table.place(x=10, y=300)
 
+        label_filtro = CTkLabel(frameSistema, text='Filtro:')
+        label_filtro.place(x=10, y=250)
+
         # Adicione a entrada de texto e o botão de filtro
         self.filtro_entry = CTkEntry(frameSistema, width=300)
-        self.filtro_entry.place(x=10, y=250)
+        self.filtro_entry.place(x=80, y=250)
 
         self.filtro_entry.bind('<KeyRelease>', self.filtrar_tabela)
+
+        # Crie botões para editar e excluir registros
+        editar_button = CTkButton(frameSistema, text='Editar', width=50, command=self.editar_registro)
+        editar_button.place(x=550, y=250)
+
+        excluir_button = CTkButton(frameSistema, text='Excluir', width=50, command=self.excluir_registro)
+        excluir_button.place(x=610, y=250)
 
     # Cria o quadro da seção "usuário"
     def usuario(self):
@@ -171,90 +181,90 @@ class App(CTk):
         labelTitulo_frame = CTkLabel(frameSobre, text='S O B R E', font=('Arial', 20))
         labelTitulo_frame.place(x=10, y=10)
 
-        label_nome = CTkLabel(frameSobre, text='informações do Projeto:', font=('Arial', 18))
-        label_nome.place(x=10, y=60)
+        label_subTitulo = CTkLabel(frameSobre, text='informações do Projeto:', font=('Arial', 18))
+        label_subTitulo.place(x=10, y=60)
 
-        label_nome = CTkLabel(frameSobre, text='Curso:')
-        label_nome.place(x=10, y=100)
-        label_nome = CTkLabel(frameSobre, text='Desenvolvimento Full Stack')
-        label_nome.place(x=80, y=100)
+        label_textoSimples = CTkLabel(frameSobre, text='Curso:')
+        label_textoSimples.place(x=10, y=100)
+        label_textoSimples = CTkLabel(frameSobre, text='Desenvolvimento Full Stack')
+        label_textoSimples.place(x=80, y=100)
 
-        label_nome = CTkLabel(frameSobre, text='Semestre:')
-        label_nome.place(x=10, y=120)
-        label_nome = CTkLabel(frameSobre, text='2023.3')
-        label_nome.place(x=80, y=120)
+        label_textoSimples = CTkLabel(frameSobre, text='Semestre:')
+        label_textoSimples.place(x=10, y=125)
+        label_textoSimples = CTkLabel(frameSobre, text='2023.3')
+        label_textoSimples.place(x=80, y=125)
 
-        label_nome = CTkLabel(frameSobre, text='Objetivo:')
-        label_nome.place(x=10, y=140)
-        label_nome = CTkLabel(frameSobre, text='Missão Certificação')
-        label_nome.place(x=80, y=140)
+        label_textoSimples = CTkLabel(frameSobre, text='Objetivo:')
+        label_textoSimples.place(x=10, y=150)
+        label_textoSimples = CTkLabel(frameSobre, text='Missão Certificação')
+        label_textoSimples.place(x=80, y=150)
 
-        label_nome = CTkLabel(frameSobre, text='Disciplina:')
-        label_nome.place(x=10, y=160)
-        label_nome = CTkLabel(frameSobre, text='Projetando uma Aplicação Desktop')
-        label_nome.place(x=80, y=160)
+        label_textoSimples = CTkLabel(frameSobre, text='Disciplina:')
+        label_textoSimples.place(x=10, y=175)
+        label_textoSimples = CTkLabel(frameSobre, text='Projetando uma Aplicação Desktop')
+        label_textoSimples.place(x=80, y=175)
 
-        label_nome = CTkLabel(frameSobre, text='Professor:')
-        label_nome.place(x=10, y=180)
-        label_nome = CTkLabel(frameSobre, text='Andre Luiz Avelino Sobral')
-        label_nome.place(x=80, y=180)
+        label_textoSimples = CTkLabel(frameSobre, text='Professor:')
+        label_textoSimples.place(x=10, y=200)
+        label_textoSimples = CTkLabel(frameSobre, text='Andre Luiz Avelino Sobral')
+        label_textoSimples.place(x=80, y=200)
 
-        label_codigo = CTkLabel(frameSobre, text='Equipe:', font=('Arial', 18))
-        label_codigo.place(x=10, y=220)
+        label_subTitulo = CTkLabel(frameSobre, text='Equipe:', font=('Arial', 18))
+        label_subTitulo.place(x=10, y=250)
 
-        label_nome = CTkLabel(frameSobre, text='Nome:')
-        label_nome.place(x=10, y=260)
-        label_nome = CTkLabel(frameSobre, text='Nome Número Um')
-        label_nome.place(x=80, y=260)
-        label_nome = CTkLabel(frameSobre, text='Matricula:')
-        label_nome.place(x=10, y=280)
-        label_nome = CTkLabel(frameSobre, text='202300000000')
-        label_nome.place(x=80, y=280)
+        label_textoSimples = CTkLabel(frameSobre, text='Nome:')
+        label_textoSimples.place(x=10, y=300)
+        label_textoSimples = CTkLabel(frameSobre, text='Nome Número Um')
+        label_textoSimples.place(x=80, y=300)
+        label_textoSimples = CTkLabel(frameSobre, text='Matricula:')
+        label_textoSimples.place(x=10, y=320)
+        label_textoSimples = CTkLabel(frameSobre, text='202300000000')
+        label_textoSimples.place(x=80, y=320)
 
-        label_nome = CTkLabel(frameSobre, text='Nome:')
-        label_nome.place(x=10, y=310)
-        label_nome = CTkLabel(frameSobre, text='Nome Número Dois')
-        label_nome.place(x=80, y=310)
-        label_nome = CTkLabel(frameSobre, text='Matricula:')
-        label_nome.place(x=10, y=330)
-        label_nome = CTkLabel(frameSobre, text='202300000000')
-        label_nome.place(x=80, y=330)
+        label_textoSimples = CTkLabel(frameSobre, text='Nome:')
+        label_textoSimples.place(x=10, y=350)
+        label_textoSimples = CTkLabel(frameSobre, text='Nome Número Dois')
+        label_textoSimples.place(x=80, y=350)
+        label_textoSimples = CTkLabel(frameSobre, text='Matricula:')
+        label_textoSimples.place(x=10, y=370)
+        label_textoSimples = CTkLabel(frameSobre, text='202300000000')
+        label_textoSimples.place(x=80, y=370)
 
-        label_nome = CTkLabel(frameSobre, text='Nome:')
-        label_nome.place(x=10, y=360)
-        label_nome = CTkLabel(frameSobre, text='Nome Número Três')
-        label_nome.place(x=80, y=360)
-        label_nome = CTkLabel(frameSobre, text='Matricula:')
-        label_nome.place(x=10, y=380)
-        label_nome = CTkLabel(frameSobre, text='202300000000')
-        label_nome.place(x=80, y=380)
+        label_textoSimples = CTkLabel(frameSobre, text='Nome:')
+        label_textoSimples.place(x=10, y=400)
+        label_textoSimples = CTkLabel(frameSobre, text='Nome Número Três')
+        label_textoSimples.place(x=80, y=400)
+        label_textoSimples = CTkLabel(frameSobre, text='Matricula:')
+        label_textoSimples.place(x=10, y=420)
+        label_textoSimples = CTkLabel(frameSobre, text='202300000000')
+        label_textoSimples.place(x=80, y=420)
 
-        label_nome = CTkLabel(frameSobre, text='Nome:')
-        label_nome.place(x=350, y=260)
-        label_nome = CTkLabel(frameSobre, text='Nome Número Um')
-        label_nome.place(x=420, y=260)
-        label_nome = CTkLabel(frameSobre, text='Matricula:')
-        label_nome.place(x=350, y=280)
-        label_nome = CTkLabel(frameSobre, text='202300000000')
-        label_nome.place(x=420, y=280)
+        label_textoSimples = CTkLabel(frameSobre, text='Nome:')
+        label_textoSimples.place(x=300, y=300)
+        label_textoSimples = CTkLabel(frameSobre, text='Nome Número Quatro')
+        label_textoSimples.place(x=370, y=300)
+        label_textoSimples = CTkLabel(frameSobre, text='Matricula:')
+        label_textoSimples.place(x=300, y=320)
+        label_textoSimples = CTkLabel(frameSobre, text='202300000000')
+        label_textoSimples.place(x=370, y=320)
 
-        label_nome = CTkLabel(frameSobre, text='Nome:')
-        label_nome.place(x=350, y=310)
-        label_nome = CTkLabel(frameSobre, text='Nome Número Dois')
-        label_nome.place(x=420, y=310)
-        label_nome = CTkLabel(frameSobre, text='Matricula:')
-        label_nome.place(x=350, y=330)
-        label_nome = CTkLabel(frameSobre, text='202300000000')
-        label_nome.place(x=420, y=330)
+        label_textoSimples = CTkLabel(frameSobre, text='Nome:')
+        label_textoSimples.place(x=300, y=350)
+        label_textoSimples = CTkLabel(frameSobre, text='Nome Número Cinco')
+        label_textoSimples.place(x=370, y=350)
+        label_textoSimples = CTkLabel(frameSobre, text='Matricula:')
+        label_textoSimples.place(x=300, y=370)
+        label_textoSimples = CTkLabel(frameSobre, text='202300000000')
+        label_textoSimples.place(x=370, y=370)
 
-        label_nome = CTkLabel(frameSobre, text='Nome:')
-        label_nome.place(x=350, y=360)
-        label_nome = CTkLabel(frameSobre, text='Nome Número Três')
-        label_nome.place(x=420, y=360)
-        label_nome = CTkLabel(frameSobre, text='Matricula:')
-        label_nome.place(x=350, y=380)
-        label_nome = CTkLabel(frameSobre, text='202300000000')
-        label_nome.place(x=420, y=380)
+        label_textoSimples = CTkLabel(frameSobre, text='Nome:')
+        label_textoSimples.place(x=300, y=400)
+        label_textoSimples = CTkLabel(frameSobre, text='Nome Número Seis')
+        label_textoSimples.place(x=370, y=400)
+        label_textoSimples = CTkLabel(frameSobre, text='Matricula:')
+        label_textoSimples.place(x=300, y=420)
+        label_textoSimples = CTkLabel(frameSobre, text='202300000000')
+        label_textoSimples.place(x=370, y=420)
 
     # Gera um código aleatório e insere na entrada de texto
     def gerar_codigo(self):
@@ -347,11 +357,11 @@ class App(CTk):
         conexao.close()
 
         for row in data:
-            self.data_table.insert('', 'end', values=row)
+            self.data_table.insert('', 'end', values=(row[0], row[1]))
 
     # Função para filtrar a tabela com base no critério de pesquisa
     def filtrar_tabela(self, event):
-        criterio = self.filtro_entry.get().strip().lower()
+        criterio = self.filtro_entry.get().lower().replace(" ", "")
 
         for item in self.data_table.get_children():
             self.data_table.delete(item)
@@ -364,10 +374,76 @@ class App(CTk):
 
         for row in data:
             if criterio in row[0].lower() or criterio in row[1].lower():
-                self.data_table.insert('', 'end', values=row)
+                self.data_table.insert('', 'end', values=(row[0], row[1]))
 
+    from tkinter import simpledialog, Label, Entry, Button, Toplevel
 
+    # ...
 
+    def editar_registro(self):
+        # Recupere o item selecionado na tabela
+        selected_item = self.data_table.selection()
+        if selected_item:
+            # Recupere os dados do registro selecionado
+            item = self.data_table.item(selected_item)
+            nome = item['values'][0]
+            codigo = item['values'][1]
+
+            # Crie uma janela de diálogo personalizada
+            dialog = Toplevel(self)
+            dialog.title('Editar Registro')
+            dialog.geometry('400x150')
+            dialog.resizable(width=False, height=False)
+
+            # Altere o estilo do widget Toplevel
+            dialog.tk_setPalette(background="#2E2E2E", foreground="white")  # Defina as cores para o modo dark
+
+            # Crie campos de entrada para editar o nome e o código
+            CTkLabel(dialog, text="Nome:").place(x=10, y=20)
+            novo_nome_entry = CTkEntry(dialog, width=180)
+            novo_nome_entry.insert(0, nome)
+            novo_nome_entry.place(x=10, y=50)
+
+            CTkLabel(dialog, text="Código:").place(x=210, y=20)
+            novo_codigo_entry = CTkEntry(dialog, width=180)
+            novo_codigo_entry.insert(0, codigo)
+            novo_codigo_entry.place(x=210, y=50)
+
+            # Função para atualizar o registro no banco de dados
+            def atualizar_registro():
+                novo_nome = novo_nome_entry.get().lower().replace(" ", "")
+                novo_codigo = novo_codigo_entry.get()
+                if novo_nome and novo_codigo:
+                    conexao = sqlite3.connect('banco_sistemas.db')
+                    c = conexao.cursor()
+                    c.execute("UPDATE tabela_sistemas SET nome=?, codigo=? WHERE nome=?",
+                              (novo_nome, novo_codigo, nome))
+                    conexao.commit()
+                    conexao.close()
+                    self.update_data_table()
+                    dialog.destroy()
+
+            # Crie um botão para confirmar a atualização
+            CTkButton(dialog, text="Confirmar", command=atualizar_registro).place(x=125, y=100)
+
+    def excluir_registro(self):
+        # Recupere o item selecionado na tabela
+        selected_item = self.data_table.selection()
+        if selected_item:
+            # Exiba um diálogo de confirmação
+            resposta = messagebox.askyesno("Confirmação", "Tem certeza de que deseja excluir este registro?")
+            if resposta == True:
+                # Recupere os dados do registro selecionado
+                item = self.data_table.item(selected_item)
+                nome = item['values'][0]
+
+                # Exclua o registro do banco de dados
+                conexao = sqlite3.connect('banco_sistemas.db')
+                c = conexao.cursor()
+                c.execute("DELETE FROM tabela_sistemas WHERE nome=?", (nome,))
+                conexao.commit()
+                conexao.close()
+                self.update_data_table()
 
 
 # Executa a aplicação
