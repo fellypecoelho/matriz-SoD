@@ -3,29 +3,6 @@ from tkinter import messagebox, ttk
 import random
 import sqlite3
 
-#O CODIGO ABAIXO ESTÁ COMENTADO PARA NÃO CRIAR UM BANDO DE DADOS SEM QUERER QUANDO EXECUTAR
-#MAS MANTIVE O CODIGO AQUI PARA VOCÊS VISUALIZAREM COMO EU FIZ
-
-# #Criando o Banco de Dados:
-#
-# conexao = sqlite3.connect('banco_sistemas.db')
-#
-# # Criando o cursor:
-# c = conexao.cursor()
-#
-# # Criando a tabela:
-#
-# # c.execute("""CREATE TABLE tabela_sistemas (
-# #     nome text,
-# #     codigo text,
-# #     )""")
-#
-# #Commit as mudanças:
-# conexao.commit()
-#
-# #Fechar o banco de dados:
-# conexao.close()
-
 
 # Classe principal da aplicação
 class App(CTk):
@@ -45,6 +22,7 @@ class App(CTk):
         self.perfil()  # Cria o quadro da seção "perfil"
         self.sistema()  # Cria o quadro da seção "sistema"
         self.usuario()  # Cria o quadro da seção "usuário"
+        self.sobre()  # Cria o quadro da seção "sobre"
 
         self.show_home_frame()  # Exibe o quadro "home" por padrão
 
@@ -70,7 +48,7 @@ class App(CTk):
         frameMenu = CTkFrame(self, width=150, height=500, corner_radius=0)
         frameMenu.place(x=0, y=0)
 
-        btn_nomes = ['home', 'perfil', 'sistema', 'usuario']
+        btn_nomes = ['home', 'perfil', 'sistema', 'usuario', 'sobre']
 
         for i, btn_nome in enumerate(btn_nomes):
             # Cria os botões do menu
@@ -115,10 +93,15 @@ class App(CTk):
     def show_usuario_frame(self):
         self.show_frame('usuario')
 
+    # Exibe o quadro "sobre"
+    def show_sobre_frame(self):
+        self.show_frame('sobre')
+
     # Cria o quadro da seção "home"
     def home(self):
         frameHome = CTkFrame(self, fg_color='transparent', width=750, height=500, corner_radius=0)
         self.frames['home'] = frameHome
+
         labelTitulo_frame = CTkLabel(frameHome, text='H O M E', font=('Arial', 20))
         labelTitulo_frame.place(x=10, y=10)
 
@@ -126,6 +109,7 @@ class App(CTk):
     def perfil(self):
         framePerfil = CTkFrame(self, fg_color='transparent', width=750, height=500, corner_radius=0)
         self.frames['perfil'] = framePerfil
+
         labelTitulo_frame = CTkLabel(framePerfil, text='P E R F I L', font=('Arial', 20))
         labelTitulo_frame.place(x=10, y=10)
 
@@ -169,15 +153,108 @@ class App(CTk):
         self.filtro_entry = CTkEntry(frameSistema, width=300)
         self.filtro_entry.place(x=10, y=250)
 
-        filtro_button = CTkButton(frameSistema, text='Filtrar', command=self.filtrar_tabela)
-        filtro_button.place(x=320, y=250)
+        self.filtro_entry.bind('<KeyRelease>', self.filtrar_tabela)
 
     # Cria o quadro da seção "usuário"
     def usuario(self):
         frameUsuario = CTkFrame(self, fg_color='transparent', width=750, height=500, corner_radius=0)
         self.frames['usuario'] = frameUsuario
+
         labelTitulo_frame = CTkLabel(frameUsuario, text='U S U Á R I O', font=('Arial', 20))
         labelTitulo_frame.place(x=10, y=10)
+
+    # Cria o quadro da seção "sobre"
+    def sobre(self):
+        frameSobre = CTkFrame(self, fg_color='transparent', width=750, height=500, corner_radius=0)
+        self.frames['sobre'] = frameSobre
+
+        labelTitulo_frame = CTkLabel(frameSobre, text='S O B R E', font=('Arial', 20))
+        labelTitulo_frame.place(x=10, y=10)
+
+        label_nome = CTkLabel(frameSobre, text='informações do Projeto:', font=('Arial', 18))
+        label_nome.place(x=10, y=60)
+
+        label_nome = CTkLabel(frameSobre, text='Curso:')
+        label_nome.place(x=10, y=100)
+        label_nome = CTkLabel(frameSobre, text='Desenvolvimento Full Stack')
+        label_nome.place(x=80, y=100)
+
+        label_nome = CTkLabel(frameSobre, text='Semestre:')
+        label_nome.place(x=10, y=120)
+        label_nome = CTkLabel(frameSobre, text='2023.3')
+        label_nome.place(x=80, y=120)
+
+        label_nome = CTkLabel(frameSobre, text='Objetivo:')
+        label_nome.place(x=10, y=140)
+        label_nome = CTkLabel(frameSobre, text='Missão Certificação')
+        label_nome.place(x=80, y=140)
+
+        label_nome = CTkLabel(frameSobre, text='Disciplina:')
+        label_nome.place(x=10, y=160)
+        label_nome = CTkLabel(frameSobre, text='Projetando uma Aplicação Desktop')
+        label_nome.place(x=80, y=160)
+
+        label_nome = CTkLabel(frameSobre, text='Professor:')
+        label_nome.place(x=10, y=180)
+        label_nome = CTkLabel(frameSobre, text='Andre Luiz Avelino Sobral')
+        label_nome.place(x=80, y=180)
+
+        label_codigo = CTkLabel(frameSobre, text='Equipe:', font=('Arial', 18))
+        label_codigo.place(x=10, y=220)
+
+        label_nome = CTkLabel(frameSobre, text='Nome:')
+        label_nome.place(x=10, y=260)
+        label_nome = CTkLabel(frameSobre, text='Nome Número Um')
+        label_nome.place(x=80, y=260)
+        label_nome = CTkLabel(frameSobre, text='Matricula:')
+        label_nome.place(x=10, y=280)
+        label_nome = CTkLabel(frameSobre, text='202300000000')
+        label_nome.place(x=80, y=280)
+
+        label_nome = CTkLabel(frameSobre, text='Nome:')
+        label_nome.place(x=10, y=310)
+        label_nome = CTkLabel(frameSobre, text='Nome Número Dois')
+        label_nome.place(x=80, y=310)
+        label_nome = CTkLabel(frameSobre, text='Matricula:')
+        label_nome.place(x=10, y=330)
+        label_nome = CTkLabel(frameSobre, text='202300000000')
+        label_nome.place(x=80, y=330)
+
+        label_nome = CTkLabel(frameSobre, text='Nome:')
+        label_nome.place(x=10, y=360)
+        label_nome = CTkLabel(frameSobre, text='Nome Número Três')
+        label_nome.place(x=80, y=360)
+        label_nome = CTkLabel(frameSobre, text='Matricula:')
+        label_nome.place(x=10, y=380)
+        label_nome = CTkLabel(frameSobre, text='202300000000')
+        label_nome.place(x=80, y=380)
+
+        label_nome = CTkLabel(frameSobre, text='Nome:')
+        label_nome.place(x=350, y=260)
+        label_nome = CTkLabel(frameSobre, text='Nome Número Um')
+        label_nome.place(x=420, y=260)
+        label_nome = CTkLabel(frameSobre, text='Matricula:')
+        label_nome.place(x=350, y=280)
+        label_nome = CTkLabel(frameSobre, text='202300000000')
+        label_nome.place(x=420, y=280)
+
+        label_nome = CTkLabel(frameSobre, text='Nome:')
+        label_nome.place(x=350, y=310)
+        label_nome = CTkLabel(frameSobre, text='Nome Número Dois')
+        label_nome.place(x=420, y=310)
+        label_nome = CTkLabel(frameSobre, text='Matricula:')
+        label_nome.place(x=350, y=330)
+        label_nome = CTkLabel(frameSobre, text='202300000000')
+        label_nome.place(x=420, y=330)
+
+        label_nome = CTkLabel(frameSobre, text='Nome:')
+        label_nome.place(x=350, y=360)
+        label_nome = CTkLabel(frameSobre, text='Nome Número Três')
+        label_nome.place(x=420, y=360)
+        label_nome = CTkLabel(frameSobre, text='Matricula:')
+        label_nome.place(x=350, y=380)
+        label_nome = CTkLabel(frameSobre, text='202300000000')
+        label_nome.place(x=420, y=380)
 
     # Gera um código aleatório e insere na entrada de texto
     def gerar_codigo(self):
@@ -273,25 +350,24 @@ class App(CTk):
             self.data_table.insert('', 'end', values=row)
 
     # Função para filtrar a tabela com base no critério de pesquisa
-    def filtrar_tabela(self):
-        # Obtém o critério de pesquisa da entrada de texto
+    def filtrar_tabela(self, event):
         criterio = self.filtro_entry.get().strip().lower()
 
-        # Limpa os dados existentes na tabela
         for item in self.data_table.get_children():
             self.data_table.delete(item)
 
-        # Busca os dados do banco de dados
         conexao = sqlite3.connect('banco_sistemas.db')
         c = conexao.cursor()
         c.execute("SELECT nome, codigo FROM tabela_sistemas")
         data = c.fetchall()
         conexao.close()
 
-        # Preenche a tabela com os dados que correspondem ao critério de pesquisa
         for row in data:
             if criterio in row[0].lower() or criterio in row[1].lower():
                 self.data_table.insert('', 'end', values=row)
+
+
+
 
 
 # Executa a aplicação
