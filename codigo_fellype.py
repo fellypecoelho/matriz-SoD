@@ -426,6 +426,11 @@ class App(CTk):
             # Crie um botão para confirmar a atualização
             CTkButton(dialog, text="Confirmar", command=atualizar_registro).place(x=125, y=100)
 
+            # Centralize a janela Toplevel
+            x = (self.winfo_screenwidth() - dialog.winfo_reqwidth()) / 2
+            y = (self.winfo_screenheight() - dialog.winfo_reqheight()) / 2
+            dialog.geometry("+%d+%d" % (x, y))
+
     def excluir_registro(self):
         # Recupere o item selecionado na tabela
         selected_item = self.data_table.selection()
