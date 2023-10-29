@@ -2,6 +2,7 @@ from customtkinter import *
 from tkinter import messagebox, ttk, Toplevel
 import random
 import sqlite3
+from databse.systems_db import SystemsDb
 
 
 # Classe principal da aplicação
@@ -27,6 +28,8 @@ class App(CTk):
         self.show_home_frame()  # Exibe o quadro "home" por padrão
 
         self.update_data_table()  # Inicializar a tabela com dados existentes
+
+        self.systemsdb = SystemsDb()
 
     # Configurações da janela principal
     def layout_config(self):
@@ -269,24 +272,15 @@ class App(CTk):
     # Gera um código aleatório e insere na entrada de texto
     def gerar_codigo(self):
         # Crie uma conexão com o banco de dados SQLite
-        conexao = sqlite3.connect('banco_sistemas.db')
-        c = conexao.cursor()
 
         while True:
             codigo_aleatorio = random.randint(1000, 9999)
-
-            # Verifique se o código já existe no banco de dados
-            c.execute("SELECT COUNT(*) FROM tabela_sistemas WHERE codigo=?", (str(codigo_aleatorio),))
-            count = c.fetchone()[0]
-
+            count = self.systemsdb.search_id(codigo_aleatorio)
             if count == 0:  # O código é único
                 break
 
         self.codigo_entry.delete(0, 'end')
         self.codigo_entry.insert(0, str(codigo_aleatorio))
-
-        # Feche a conexão com o banco de dados
-        conexao.close()
 
     # Criar novo cadastro no banco de dados
     def criar_cadastro(self):
@@ -350,9 +344,9 @@ class App(CTk):
             self.data_table.delete(item)
 
         # Buscar dados do banco de dados e preencher a tabela
-        conexao = sqlite3.connect('banco_sistemas.db')
+        conexao = sqlite3.connect('database.db')
         c = conexao.cursor()
-        c.execute("SELECT nome, codigo FROM tabela_sistemas")
+        c.execute("SELECT nome_sistema, cod_sistema FROM sistemas")
         data = c.fetchall()
         conexao.close()
 

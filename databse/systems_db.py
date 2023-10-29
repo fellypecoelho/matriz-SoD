@@ -1,4 +1,4 @@
-from base_database import Database
+from databse.base_database import Database
 
 
 class SystemsDb:
@@ -20,6 +20,6 @@ class SystemsDb:
         return result
 
     def search_id(self, id_sistema):
-        self.cursor.execute('SELECT id FROM systems WHERE id = ?', (id_sistema,))
+        self.cursor.execute('SELECT cod_sistema FROM sistemas WHERE cod_sistema = ?', (id_sistema,))
         result = self.cursor.fetchall()
         return result
