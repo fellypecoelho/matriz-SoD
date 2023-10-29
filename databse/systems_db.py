@@ -21,5 +21,6 @@ class SystemsDb:
 
     def search_id(self, id_sistema):
         self.cursor.execute('SELECT cod_sistema FROM sistemas WHERE cod_sistema = ?', (id_sistema,))
-        result = self.cursor.fetchall()
+        result = self.cursor.fetchone()
+        print(result)
         return result

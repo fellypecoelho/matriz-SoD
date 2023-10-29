@@ -19,13 +19,13 @@ class App(CTk):
         self.nome_entry = None
         self.codigo_entry = None
 
-        self.home()  # Cria o quadro da seção "home"
+        self.matriz()  # Cria o quadro da seção "home"
         self.perfil()  # Cria o quadro da seção "perfil"
         self.sistema()  # Cria o quadro da seção "sistema"
         self.usuario()  # Cria o quadro da seção "usuário"
         self.sobre()  # Cria o quadro da seção "sobre"
 
-        self.show_home_frame()  # Exibe o quadro "home" por padrão
+        self.show_matriz_frame()  # Exibe o quadro "home" por padrão
 
         self.update_data_table()  # Inicializar a tabela com dados existentes
 
@@ -51,7 +51,7 @@ class App(CTk):
         frameMenu = CTkFrame(self, width=150, height=500, corner_radius=0)
         frameMenu.place(x=0, y=0)
 
-        btn_nomes = ['home', 'perfil', 'sistema', 'usuario', 'sobre']
+        btn_nomes = ['matriz', 'perfil', 'sistema', 'usuario', 'sobre']
 
         for i, btn_nome in enumerate(btn_nomes):
             # Cria os botões do menu
@@ -81,8 +81,8 @@ class App(CTk):
                 button.configure(fg_color=btn_corInativa)
 
     # Exibe o quadro "home"
-    def show_home_frame(self):
-        self.show_frame('home')
+    def show_matriz_frame(self):
+        self.show_frame('matriz')
 
     # Exibe o quadro "perfil"
     def show_perfil_frame(self):
@@ -101,11 +101,11 @@ class App(CTk):
         self.show_frame('sobre')
 
     # Cria o quadro da seção "home"
-    def home(self):
-        frameHome = CTkFrame(self, fg_color='transparent', width=750, height=500, corner_radius=0)
-        self.frames['home'] = frameHome
+    def matriz(self):
+        frameMatriz = CTkFrame(self, fg_color='transparent', width=750, height=500, corner_radius=0)
+        self.frames['matriz'] = frameMatriz
 
-        labelTitulo_frame = CTkLabel(frameHome, text='H O M E', font=('Arial', 20))
+        labelTitulo_frame = CTkLabel(frameMatriz, text='M A T R I Z   S O D', font=('Arial', 20))
         labelTitulo_frame.place(x=10, y=10)
 
     # Cria o quadro da seção "perfil"
@@ -115,6 +115,46 @@ class App(CTk):
 
         labelTitulo_frame = CTkLabel(framePerfil, text='P E R F I L', font=('Arial', 20))
         labelTitulo_frame.place(x=10, y=10)
+
+        label_nomeSistema = CTkLabel(framePerfil, text='Sistema:')
+        label_nomeSistema.place(x=10, y=60)
+        self.codigo_comboBox = CTkComboBox(framePerfil, width=200)
+        self.codigo_comboBox.place(x=70, y=60)
+
+        label_nome = CTkLabel(framePerfil, text='Nome:')
+        label_nome.place(x=10, y=100)
+        self.nome_entry = CTkEntry(framePerfil, width=200)
+        self.nome_entry.place(x=70, y=100)
+
+        label_descricao = CTkLabel(framePerfil, text='Descrição:')
+        label_descricao.place(x=300, y=60)
+        self.descricao_entry = CTkTextbox(framePerfil, width=280, height=70, fg_color='#343638', border_width=2, border_color='#565b5e')
+        self.descricao_entry.place(x=380, y=60)
+
+        criar_button = CTkButton(framePerfil, text='Criar Cadastro')
+        criar_button.place(x=10, y=150)
+
+        # Cria uma tabela para exibir dados
+        self.data_table = ttk.Treeview(framePerfil, columns=('Nome', 'Código', 'Ações'), show='headings')
+        self.data_table.heading('#1', text='Nome')
+        self.data_table.heading('#2', text='Código')
+        self.data_table.column('#1', width=300)
+        self.data_table.column('#2', width=150)
+
+        # Remover a coluna de índice padrão
+        self.data_table['show'] = 'headings'
+
+        self.data_table.place(x=10, y=300)
+
+        label_filtro = CTkLabel(framePerfil, text='Filtro:')
+        label_filtro.place(x=10, y=250)
+
+        # Adicione a entrada de texto e o botão de filtro
+        self.filtro_entry = CTkEntry(framePerfil, width=300)
+        self.filtro_entry.place(x=70, y=250)
+
+        self.filtro_entry.bind('<KeyRelease>', self.filtrar_tabela)
+
 
     # Cria o quadro da seção "sistema"
     def sistema(self):
@@ -126,19 +166,19 @@ class App(CTk):
 
         label_nome = CTkLabel(frameSistema, text='Nome:')
         label_nome.place(x=10, y=60)
-        self.nome_entry = CTkEntry(frameSistema, width=200)
-        self.nome_entry.place(x=80, y=60)
+        self.entry_nome = CTkEntry(frameSistema, width=210)
+        self.entry_nome.place(x=70, y=60)
 
         label_codigo = CTkLabel(frameSistema, text='Código:')
         label_codigo.place(x=10, y=100)
-        self.codigo_entry = CTkEntry(frameSistema, width=140)
-        self.codigo_entry.place(x=80, y=100)
+        self.entry_codigo = CTkEntry(frameSistema, width=150)
+        self.entry_codigo.place(x=70, y=100)
 
-        gerar_codigo_button = CTkButton(frameSistema, text='Gerar', width=50, command=self.gerar_codigo)
-        gerar_codigo_button.place(x=230, y=100)
+        button_gerarCodigo = CTkButton(frameSistema, text='Gerar', width=50, command=self.gerar_codigo)
+        button_gerarCodigo.place(x=230, y=100)
 
-        criar_button = CTkButton(frameSistema, text='Criar Cadastro', command=self.criar_cadastro)
-        criar_button.place(x=10, y=150)
+        button_criarSistema = CTkButton(frameSistema, text='Criar Cadastro', command=self.criar_cadastro)
+        button_criarSistema.place(x=10, y=150)
 
         # Cria uma tabela para exibir dados
         self.data_table = ttk.Treeview(frameSistema, columns=('Nome', 'Código', 'Ações'), show='headings')
@@ -156,17 +196,17 @@ class App(CTk):
         label_filtro.place(x=10, y=250)
 
         # Adicione a entrada de texto e o botão de filtro
-        self.filtro_entry = CTkEntry(frameSistema, width=300)
-        self.filtro_entry.place(x=80, y=250)
+        self.entry_filtro = CTkEntry(frameSistema, width=300)
+        self.entry_filtro.place(x=70, y=250)
 
-        self.filtro_entry.bind('<KeyRelease>', self.filtrar_tabela)
+        self.entry_filtro.bind('<KeyRelease>', self.filtrar_tabela)
 
         # Crie botões para editar e excluir registros
-        editar_button = CTkButton(frameSistema, text='Editar', width=50, command=self.editar_registro)
-        editar_button.place(x=550, y=250)
+        button_editar = CTkButton(frameSistema, text='Editar', width=50, command=self.editar_registro)
+        button_editar.place(x=550, y=250)
 
-        excluir_button = CTkButton(frameSistema, text='Excluir', width=50, command=self.excluir_registro)
-        excluir_button.place(x=610, y=250)
+        button_excluir = CTkButton(frameSistema, text='Excluir', width=50, command=self.excluir_registro)
+        button_excluir.place(x=610, y=250)
 
     # Cria o quadro da seção "usuário"
     def usuario(self):
@@ -175,6 +215,50 @@ class App(CTk):
 
         labelTitulo_frame = CTkLabel(frameUsuario, text='U S U Á R I O', font=('Arial', 20))
         labelTitulo_frame.place(x=10, y=10)
+
+        label_nomeSistema = CTkLabel(frameUsuario, text='Sistema:')
+        label_nomeSistema.place(x=10, y=60)
+        self.comboBox_nomeSistema = CTkComboBox(frameUsuario, width=200)
+        self.comboBox_nomeSistema.place(x=70, y=60)
+
+        label_nomePerfil = CTkLabel(frameUsuario, text='Perfil:')
+        label_nomePerfil.place(x=10, y=100)
+        self.comboBox_nomeCodigo = CTkComboBox(frameUsuario, width=200)
+        self.comboBox_nomeCodigo.place(x=70, y=100)
+
+        label_nome = CTkLabel(frameUsuario, text='Nome:')
+        label_nome.place(x=300, y=60)
+        self.entry_nome = CTkEntry(frameUsuario, width=200)
+        self.entry_nome.place(x=360, y=60)
+
+        label_cpf = CTkLabel(frameUsuario, text='CPF:')
+        label_cpf.place(x=300, y=100)
+        self.entry_cpf = CTkEntry(frameUsuario, width=200)
+        self.entry_cpf.place(x=360, y=100)
+
+        criar_button = CTkButton(frameUsuario, text='Criar Cadastro')
+        criar_button.place(x=10, y=150)
+
+        # Cria uma tabela para exibir dados
+        self.data_table = ttk.Treeview(frameUsuario, columns=('Nome', 'Código', 'Ações'), show='headings')
+        self.data_table.heading('#1', text='Nome')
+        self.data_table.heading('#2', text='Código')
+        self.data_table.column('#1', width=300)
+        self.data_table.column('#2', width=150)
+
+        # Remover a coluna de índice padrão
+        self.data_table['show'] = 'headings'
+
+        self.data_table.place(x=10, y=300)
+
+        label_filtro = CTkLabel(frameUsuario, text='Filtro:')
+        label_filtro.place(x=10, y=250)
+
+        # Adicione a entrada de texto e o botão de filtro
+        self.filtro_entry = CTkEntry(frameUsuario, width=300)
+        self.filtro_entry.place(x=70, y=250)
+
+        self.filtro_entry.bind('<KeyRelease>', self.filtrar_tabela)
 
     # Cria o quadro da seção "sobre"
     def sobre(self):
@@ -272,15 +356,19 @@ class App(CTk):
     # Gera um código aleatório e insere na entrada de texto
     def gerar_codigo(self):
         # Crie uma conexão com o banco de dados SQLite
+        num = random.randint(0, 3)
+        sistema_bd = self.systemsdb.search_id(num,)
 
-        while True:
-            codigo_aleatorio = random.randint(1000, 9999)
-            count = self.systemsdb.search_id(codigo_aleatorio)
-            if count == 0:  # O código é único
-                break
+        while sistema_bd is not None:
+            print(f"O número {num} já existe no banco de dados.")
+            num = random.randint(1, 3)
+            sistema_bd = self.systemsdb.search_id(num, )
+        print(f"O número {num} é único e será inserido no banco de dados.")
+
+
 
         self.codigo_entry.delete(0, 'end')
-        self.codigo_entry.insert(0, str(codigo_aleatorio))
+        self.codigo_entry.insert(0, str(num))
 
     # Criar novo cadastro no banco de dados
     def criar_cadastro(self):
@@ -289,14 +377,14 @@ class App(CTk):
 
         if sistemaNome and sistemaCodigo:
             # Verifique se o nome já existe no banco de dados
-            conexao = sqlite3.connect('banco_sistemas.db')
+            conexao = sqlite3.connect('database.db')
             c = conexao.cursor()
 
-            c.execute("SELECT * FROM tabela_sistemas WHERE nome = ?", (sistemaNome,))
+            c.execute("SELECT * FROM sistemas WHERE nome_sistema = ?", (sistemaNome,))
             nome_existente = c.fetchone()
 
             # Verifique se o código já existe no banco de dados
-            c.execute("SELECT * FROM tabela_sistemas WHERE codigo = ?", (sistemaCodigo,))
+            c.execute("SELECT * FROM sistemas WHERE cod_sistema = ?", (sistemaCodigo,))
             codigo_existente = c.fetchone()
 
             # Mensagem de erro padrão
@@ -315,11 +403,7 @@ class App(CTk):
                 resposta = messagebox.askquestion('Confirmação', 'Confirmar o cadastro?')
                 if resposta == 'yes':
                     # Inserir dados na tabela:
-                    c.execute('INSERT INTO tabela_sistemas VALUES (:nome, :codigo)',
-                              {
-                                  'nome': sistemaNome,
-                                  'codigo': sistemaCodigo
-                              })
+                    c.execute('INSERT INTO sistemas VALUES (?,?)', (sistemaCodigo, sistemaNome))
                     # Confirmar as alterações:
                     conexao.commit()
                     # Fechar o banco de dados:
@@ -408,9 +492,9 @@ class App(CTk):
                 novo_nome = novo_nome_entry.get().lower().replace(" ", "")
                 novo_codigo = novo_codigo_entry.get()
                 if novo_nome and novo_codigo:
-                    conexao = sqlite3.connect('banco_sistemas.db')
+                    conexao = sqlite3.connect('database.db')
                     c = conexao.cursor()
-                    c.execute("UPDATE tabela_sistemas SET nome=?, codigo=? WHERE nome=?",
+                    c.execute("UPDATE sistemas SET nome_sistema=?, cod_sistema=? WHERE nome_sistema=?",
                               (novo_nome, novo_codigo, nome))
                     conexao.commit()
                     conexao.close()
@@ -437,9 +521,9 @@ class App(CTk):
                 nome = item['values'][0]
 
                 # Exclua o registro do banco de dados
-                conexao = sqlite3.connect('banco_sistemas.db')
+                conexao = sqlite3.connect('database.db')
                 c = conexao.cursor()
-                c.execute("DELETE FROM tabela_sistemas WHERE nome=?", (nome,))
+                c.execute("DELETE FROM sistemas WHERE nome_sistema=?", (nome,))
                 conexao.commit()
                 conexao.close()
                 self.update_data_table()
