@@ -18,3 +18,8 @@ class SystemsDb:
         self.cursor.execute('SELECT * FROM systems')
         result = self.cursor.fetchall()
         return result
+
+    def search_id(self, id_sistema):
+        self.cursor.execute('SELECT id FROM systems WHERE id = ?', (id_sistema,))
+        result = self.cursor.fetchall()
+        return result
